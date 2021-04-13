@@ -1,0 +1,29 @@
+version: '2'
+services:
+  db:
+    container_name: mia_db
+    image: postgres:10
+    environment:
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_USER=odoo
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - mia-db-data:/var/lib/postgresql/data/pgdata
+    ports:
+      - "$port_db:5432"
+  web:
+    container_name: mia_odoo
+    image: mia_odoo:13
+    build: ./
+    depends_on:
+      - db
+    ports:
+      - "$port:8069"
+      - "$chat_port:8072"
+    volumes:
+      - mia-web-data:/var/lib/odoo
+      - ./docker:/etc/odoo/
+      - ./addons:/mnt/extra-addons
+volumes:
+    mia-web-data:
+    mia-db-data:
